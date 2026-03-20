@@ -1,0 +1,3365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio CMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Bricolage+Grotesque:wght@700&family=DM+Serif+Display:ital@1&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff5c3a;
+            --secondary: #14b8a6;
+            --dark: #ffffff;
+            --darker: #f9f9f7;
+            --surface: #f5f5f3;
+            --border: #e8e8e5;
+            --text: #1a1a18;
+            --text-muted: #8a8a8a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #ffffff;
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            background: var(--dark);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 0;
+            z-index: 1000;
+        }
+
+        .sidebar-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--text);
+        }
+
+        .sidebar-logo span {
+            color: var(--primary);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-group + .sidebar-group {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .sidebar-group-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .sidebar-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            background: rgba(255, 92, 58, 0.1);
+            border-left-color: var(--primary);
+            color: var(--text);
+        }
+
+        .sidebar-badge {
+            background: var(--primary);
+            color: var(--darker);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-btn {
+            padding: 0.8rem 1rem;
+            background: var(--primary);
+            color: var(--darker);
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .preview-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 92, 58, 0.3);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            height: 70px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            gap: 2rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .section-info h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .section-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .topbar-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-secondary {
+            padding: 0.6rem 1.2rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            padding: 0.6rem 1.2rem;
+            background: #22c55e;
+            border: none;
+            color: var(--darker);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary.saved {
+            background: #22c55e;
+        }
+
+        /* ===== CONTENT AREA ===== */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* ===== CARDS & INPUTS ===== */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .card-header:hover {
+            color: var(--primary);
+        }
+
+        .card-header.collapsed ~ .card-content {
+            display: none;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="number"],
+        input[type="range"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="url"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(255, 92, 58, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            cursor: pointer;
+            border: none;
+        }
+
+        .range-value {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
+        /* ===== COLOR PICKER ===== */
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-end;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        /* ===== CHIP INPUT ===== */
+        .chip-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            min-height: 40px;
+            align-content: flex-start;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 92, 58, 0.2);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        .chip-remove {
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--primary);
+            transition: color 0.2s ease;
+        }
+
+        .chip-remove:hover {
+            color: #ff4520;
+        }
+
+        .chip-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            min-width: 100px;
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 0;
+        }
+
+        .chip-input:focus {
+            outline: none;
+        }
+
+        /* ===== ITEM ACTIONS ===== */
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 92, 58, 0.1);
+            border: 1px solid rgba(255, 92, 58, 0.3);
+            color: var(--primary);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-small:hover {
+            background: rgba(255, 92, 58, 0.2);
+            border-color: var(--primary);
+        }
+
+        .btn-delete {
+            background: rgba(255, 79, 79, 0.1);
+            border-color: rgba(255, 79, 79, 0.3);
+            color: #ff4f4f;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 79, 79, 0.2);
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 2px dashed var(--border);
+            color: var(--text);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin-top: 1rem;
+        }
+
+        .btn-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ===== STAT CARDS ===== */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #22c55e;
+            color: var(--darker);
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideUp 0.3s ease forwards;
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 90%;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        #preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--text);
+        }
+
+        /* ===== GITHUB DEPLOY ===== */
+        .gh-log {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1rem;
+            font-size: 0.82rem;
+            font-family: 'Courier New', monospace;
+            max-height: 160px;
+            overflow-y: auto;
+            line-height: 1.7;
+        }
+
+        .gh-log-line-success { color: #22c55e; }
+        .gh-log-line-error   { color: #ff4f4f; }
+        .gh-log-line-info    { color: var(--text-muted); }
+
+        .gh-status-connected {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(34,197,94,0.1);
+            border-radius: 20px; font-size: 0.85rem;
+            font-weight: 600; color: #22c55e; margin-bottom: 1.5rem;
+        }
+
+        .gh-status-disconnected {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,92,58,0.1);
+            border-radius: 20px; font-size: 0.85rem;
+            font-weight: 600; color: var(--primary); margin-bottom: 1.5rem;
+        }
+
+        .gh-btn-row {
+            display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.5rem;
+        }
+
+        .btn-github {
+            padding: 0.6rem 1.2rem;
+            background: #24292f;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-github:hover { background: #444d56; transform: translateY(-2px); }
+
+        .info-steps {
+            list-style: none;
+            counter-reset: steps;
+        }
+
+        .info-steps li {
+            counter-increment: steps;
+            padding: 0.6rem 0 0.6rem 2.5rem;
+            position: relative;
+            font-size: 0.9rem;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-steps li:last-child { border-bottom: none; }
+
+        .info-steps li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 24px;
+            text-align: center;
+        }
+
+        .info-steps code {
+            background: var(--surface);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ===== TOGGLE SWITCH ===== */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 30px;
+            background: var(--border);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .switch.active {
+            background: var(--primary);
+        }
+
+        .switch-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--text);
+            border-radius: 50%;
+            transition: left 0.3s ease;
+        }
+
+        .switch.active .switch-slider {
+            left: 23px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 1rem 0;
+            }
+
+            .sidebar-logo {
+                font-size: 1rem;
+                padding: 0 0.5rem;
+                text-align: center;
+            }
+
+            .sidebar-item {
+                justify-content: center;
+                flex-direction: column;
+                padding: 0.8rem 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .sidebar-badge {
+                display: none;
+            }
+
+            .sidebar-group-title {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .topbar-left {
+                width: 100%;
+            }
+
+            .topbar-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .modal {
+                width: 95%;
+                height: 95vh;
+            }
+
+            .stat-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .color-picker-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">dilina<span>.</span></div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">Management</div>
+                <div class="sidebar-item active" data-panel="dashboard">📊 Dashboard</div>
+                <div class="sidebar-item" data-panel="hero">🏠 Home/Hero</div>
+            </div>
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">Content</div>
+                <div class="sidebar-item" data-panel="services">
+                    <span>🎯 Services</span>
+                    <span class="sidebar-badge" id="services-count">6</span>
+                </div>
+                <div class="sidebar-item" data-panel="about">👤 About Me</div>
+                <div class="sidebar-item" data-panel="education">
+                    <span>📚 Education</span>
+                    <span class="sidebar-badge" id="education-count">3</span>
+                </div>
+                <div class="sidebar-item" data-panel="skills">💡 Skills</div>
+                <div class="sidebar-item" data-panel="projects">
+                    <span>🚀 Projects</span>
+                    <span class="sidebar-badge" id="projects-count">6</span>
+                </div>
+            </div>
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">Settings</div>
+                <div class="sidebar-item" data-panel="contact">📮 Contact</div>
+                <div class="sidebar-item" data-panel="settings">⚙️ Site Settings</div>
+                <div class="sidebar-item" data-panel="github">🐙 GitHub Deploy</div>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="preview-btn" id="preview-btn">👁️ Preview Site</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="section-info">
+                    <h2 id="section-title">Dashboard</h2>
+                    <p id="section-subtitle">Overview and quick actions</p>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="status-pill">
+                    <div class="status-dot"></div>
+                    Live
+                </div>
+                <button class="btn-secondary" id="reset-btn">Reset</button>
+                <button class="btn-primary" id="save-btn">💾 Save Changes</button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+
+            <!-- DASHBOARD PANEL -->
+            <div class="panel active" id="dashboard">
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-services">6</div>
+                        <div class="stat-label">Services</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-education">3</div>
+                        <div class="stat-label">Education Entries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-skills">6</div>
+                        <div class="stat-label">Skills</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-projects">6</div>
+                        <div class="stat-label">Projects</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <button class="btn-small" onclick="addService()">+ Add Service</button>
+                        <button class="btn-small" onclick="addEducation()">+ Add Education</button>
+                        <button class="btn-small" onclick="addProject()">+ Add Project</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Content Summary</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Your portfolio has <strong id="total-items">15+</strong> content items. All sections are visible and ready to go live.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HERO PANEL -->
+            <div class="panel" id="hero">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Hero Section</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Name</label>
+                            <input type="text" id="hero-name" placeholder="Your name" value="Dilina">
+                        </div>
+                        <div class="input-group">
+                            <label>Logo Text (before the dot)</label>
+                            <input type="text" id="hero-logo" placeholder="Same as name" value="dilina">
+                        </div>
+                        <div class="input-group">
+                            <label>Headline Line 1</label>
+                            <input type="text" id="hero-h1" placeholder="Crafting" value="Crafting">
+                        </div>
+                        <div class="input-group">
+                            <label>Headline Line 2 (italic, accent color)</label>
+                            <input type="text" id="hero-h2" placeholder="digital experiences" value="digital experiences">
+                        </div>
+                        <div class="input-group">
+                            <label>Headline Line 3</label>
+                            <input type="text" id="hero-h3" placeholder="that matter" value="that matter">
+                        </div>
+                        <div class="input-group">
+                            <label>Subtitle</label>
+                            <textarea id="hero-subtitle" placeholder="Your subtitle">Fresh design graduate passionate about creating beautiful, user-centered interfaces and experiences that help businesses grow.</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Availability Badge Text</label>
+                            <input type="text" id="hero-availability" placeholder="Open to opportunities" value="Open to opportunities">
+                        </div>
+                        <div class="input-group">
+                            <label>Graduation Year</label>
+                            <input type="text" id="hero-grad-year" placeholder="2024" value="2024">
+                        </div>
+
+                        <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Stats</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="input-group">
+                                <label>Stat 1 Number</label>
+                                <input type="text" id="hero-stat1-num" placeholder="15+" value="15+">
+                            </div>
+                            <div class="input-group">
+                                <label>Stat 1 Label</label>
+                                <input type="text" id="hero-stat1-label" placeholder="Projects" value="Projects">
+                            </div>
+                            <div class="input-group">
+                                <label>Stat 2 Number</label>
+                                <input type="text" id="hero-stat2-num" placeholder="3+" value="3+">
+                            </div>
+                            <div class="input-group">
+                                <label>Stat 2 Label</label>
+                                <input type="text" id="hero-stat2-label" placeholder="Years" value="Years">
+                            </div>
+                            <div class="input-group">
+                                <label>Stat 3 Number</label>
+                                <input type="text" id="hero-stat3-num" placeholder="50+" value="50+">
+                            </div>
+                            <div class="input-group">
+                                <label>Stat 3 Label</label>
+                                <input type="text" id="hero-stat3-label" placeholder="Clients" value="Clients">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SERVICES PANEL -->
+            <div class="panel" id="services">
+                <div id="services-list"></div>
+                <button class="btn-add" onclick="addService()">+ Add Service</button>
+            </div>
+
+            <!-- ABOUT PANEL -->
+            <div class="panel" id="about">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>About Section</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Year Badge</label>
+                            <input type="text" id="about-year" placeholder="2024" value="2024">
+                        </div>
+                        <div class="input-group">
+                            <label>Year Label</label>
+                            <input type="text" id="about-year-label" placeholder="Graduated" value="Graduated">
+                        </div>
+                        <div class="input-group">
+                            <label>Heading (last 2 words will be italic)</label>
+                            <input type="text" id="about-heading" placeholder="Creative Developer & Designer" value="Creative Developer & Designer">
+                        </div>
+
+                        <h4 style="margin: 2rem 0 1rem;">Paragraphs</h4>
+                        <div class="input-group">
+                            <label>Paragraph 1</label>
+                            <textarea id="about-p1">I'm a fresh design graduate with a passion for blending creativity with functionality. My journey started with a fascination for how things look and work together, leading me to pursue a career in digital design and development.</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Paragraph 2</label>
+                            <textarea id="about-p2">With skills in both design and front-end development, I bridge the gap between beautiful aesthetics and seamless user experiences. I believe every pixel matters and every interaction should be intentional.</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Paragraph 3</label>
+                            <textarea id="about-p3">When I'm not designing or coding, you'll find me exploring new design trends, contributing to open-source projects, or sharing knowledge with the design community.</textarea>
+                        </div>
+
+                        <h4 style="margin: 2rem 0 1rem;">Personality Chips</h4>
+                        <label>Add personality traits (press Enter to add)</label>
+                        <div class="chip-input-container" id="about-chips-container">
+                            <input type="text" class="chip-input" id="about-chips-input" placeholder="Type and press Enter...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDUCATION PANEL -->
+            <div class="panel" id="education">
+                <div id="education-list"></div>
+                <button class="btn-add" onclick="addEducation()">+ Add Education</button>
+            </div>
+
+            <!-- SKILLS PANEL -->
+            <div class="panel" id="skills">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchSkillTab('bars')">Skill Bars</button>
+                    <button class="tab-btn" onclick="switchSkillTab('pills')">Tool Pills</button>
+                </div>
+
+                <div class="tab-content active" id="bars-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Design Tools</h3>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="card-content" id="design-skills-container"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Development</h3>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="card-content" id="dev-skills-container"></div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="pills-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Tools & Platforms</h3>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="card-content">
+                            <label>Add tools (press Enter to add)</label>
+                            <div class="chip-input-container" id="tools-chips-container">
+                                <input type="text" class="chip-input" id="tools-chips-input" placeholder="Type and press Enter...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Soft Skills</h3>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="card-content">
+                            <label>Add soft skills (press Enter to add)</label>
+                            <div class="chip-input-container" id="soft-chips-container">
+                                <input type="text" class="chip-input" id="soft-chips-input" placeholder="Type and press Enter...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROJECTS PANEL -->
+            <div class="panel" id="projects">
+                <div id="projects-list"></div>
+                <button class="btn-add" onclick="addProject()">+ Add Project</button>
+            </div>
+
+            <!-- CONTACT PANEL -->
+            <div class="panel" id="contact">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Contact Section</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <input type="email" id="contact-email" placeholder="your@email.com" value="dilina@example.com">
+                        </div>
+                        <div class="input-group">
+                            <label>CTA Heading</label>
+                            <input type="text" id="contact-heading" placeholder="Ready to create something amazing?" value="Ready to create something amazing?">
+                        </div>
+                        <div class="input-group">
+                            <label>Description</label>
+                            <textarea id="contact-desc">Let's collaborate on your next project. Whether you need a stunning website, an app experience, or a complete brand overhaul, I'm here to help bring your vision to life.</textarea>
+                        </div>
+
+                        <h4 style="margin: 2rem 0 1rem;">Social Links</h4>
+                        <div class="input-group">
+                            <label>GitHub URL</label>
+                            <input type="url" id="contact-github" placeholder="https://github.com/...">
+                        </div>
+                        <div class="input-group">
+                            <label>LinkedIn URL</label>
+                            <input type="url" id="contact-linkedin" placeholder="https://linkedin.com/...">
+                        </div>
+                        <div class="input-group">
+                            <label>Twitter URL</label>
+                            <input type="url" id="contact-twitter" placeholder="https://twitter.com/...">
+                        </div>
+                        <div class="input-group">
+                            <label>Dribbble URL</label>
+                            <input type="url" id="contact-dribbble" placeholder="https://dribbble.com/...">
+                        </div>
+
+                        <h4 style="margin: 2rem 0 1rem;">Footer</h4>
+                        <div class="input-group">
+                            <label>Copyright Text</label>
+                            <input type="text" id="contact-copyright" placeholder="© 2024 Name. All rights reserved." value="© 2024 Dilina Perera. All rights reserved.">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS PANEL -->
+            <div class="panel" id="settings">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Site Settings</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Page Title</label>
+                            <input type="text" id="settings-title" placeholder="Your Name - Portfolio" value="Dilina Perera - Portfolio">
+                        </div>
+
+                        <h4 style="margin: 2rem 0 1rem;">Color Theme</h4>
+                        <div class="color-picker-group">
+                            <div class="input-group">
+                                <label>Accent Color</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="accent-color" value="#ff5c3a">
+                                    <input type="text" id="accent-hex" placeholder="#ff5c3a" value="#ff5c3a" style="flex: 1;">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Secondary Color</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="secondary-color" value="#14b8a6">
+                                    <input type="text" id="secondary-hex" placeholder="#14b8a6" value="#14b8a6" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 2rem 0 1rem;">Visibility</h4>
+                        <div class="toggle-switch">
+                            <label>Services Section</label>
+                            <div class="switch active" id="toggle-services" onclick="toggleSection('services')">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="toggle-switch">
+                            <label>About Section</label>
+                            <div class="switch active" id="toggle-about" onclick="toggleSection('about')">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="toggle-switch">
+                            <label>Education Section</label>
+                            <div class="switch active" id="toggle-education" onclick="toggleSection('education')">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="toggle-switch">
+                            <label>Skills Section</label>
+                            <div class="switch active" id="toggle-skills" onclick="toggleSection('skills')">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="toggle-switch">
+                            <label>Projects Section</label>
+                            <div class="switch active" id="toggle-projects" onclick="toggleSection('projects')">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+            <!-- GITHUB PANEL -->
+            <div class="panel" id="github">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>GitHub Connection</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div id="gh-status-indicator"></div>
+                        <div class="input-group">
+                            <label>Personal Access Token</label>
+                            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+                            <small style="color:var(--text-muted);font-size:0.8rem;margin-top:0.4rem;display:block;">Create at GitHub → Settings → Developer settings → Personal access tokens (classic). Needs <strong>repo</strong> scope. Stored locally in your browser only — never uploaded.</small>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div class="input-group">
+                                <label>GitHub Username</label>
+                                <input type="text" id="gh-username" placeholder="yourusername">
+                            </div>
+                            <div class="input-group">
+                                <label>Repository Name</label>
+                                <input type="text" id="gh-repo" placeholder="my-portfolio">
+                            </div>
+                            <div class="input-group">
+                                <label>Branch</label>
+                                <input type="text" id="gh-branch" placeholder="main" value="main">
+                            </div>
+                            <div class="input-group">
+                                <label>Data File Path</label>
+                                <input type="text" id="gh-filepath" placeholder="cms-data.json" value="cms-data.json">
+                            </div>
+                        </div>
+                        <div class="gh-btn-row">
+                            <button class="btn-primary" onclick="saveGithubSettings()">💾 Save Settings</button>
+                            <button class="btn-secondary" onclick="testGithubConnection()">🔗 Test Connection</button>
+                            <button class="btn-github" onclick="pushToGitHub(false)">🐙 Push Data Now</button>
+                        </div>
+                        <div id="gh-log" class="gh-log" style="display:none;margin-top:1.2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>How to Deploy Free with GitHub Pages</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <ol class="info-steps">
+                            <li>Create a free GitHub account and a new <strong>public</strong> repository (e.g. <code>my-portfolio</code>)</li>
+                            <li>Upload <code>portfolio.html</code> to the repo root</li>
+                            <li>In repo Settings → Pages → set source to <strong>main branch / root</strong></li>
+                            <li>Create a Personal Access Token (classic) with <code>repo</code> scope at GitHub → Settings → Developer settings</li>
+                            <li>Fill in the form above and click <strong>Save Settings</strong>, then <strong>Push Data Now</strong></li>
+                            <li>From now on, clicking <strong>💾 Save Changes</strong> in the CMS auto-pushes to GitHub</li>
+                            <li>Your live site is at <code>https://yourusername.github.io/my-portfolio/portfolio.html</code></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Portfolio Preview</h2>
+                <button class="modal-close" onclick="closePreview()">✕</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="preview-frame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== STATE MANAGEMENT =====
+        const defaultData = {
+            hero: {
+                name: 'Dilina',
+                logo: 'dilina',
+                headlineLine1: 'Crafting',
+                headlineLine2: 'digital experiences',
+                headlineLine3: 'that matter',
+                subtitle: 'Fresh design graduate passionate about creating beautiful, user-centered interfaces and experiences that help businesses grow.',
+                availabilityBadge: 'Open to opportunities',
+                gradYear: '2024',
+                stat1: { num: '15+', label: 'Projects' },
+                stat2: { num: '3+', label: 'Years' },
+                stat3: { num: '50+', label: 'Clients' }
+            },
+            services: [
+                { emoji: '🎨', title: 'UI/UX Design', desc: 'Creating intuitive and beautiful interfaces that users love to interact with.' },
+                { emoji: '💻', title: 'Front-end Development', desc: 'Building responsive, performant web applications with modern technologies.' },
+                { emoji: '🔄', title: 'Responsive Design', desc: 'Ensuring perfect experiences across all devices and screen sizes.' },
+                { emoji: '⚡', title: 'Performance Optimization', desc: 'Making websites lightning-fast and optimized for conversions.' },
+                { emoji: '🛠️', title: 'Brand Strategy', desc: 'Developing cohesive visual identities that resonate with your audience.' },
+                { emoji: '📱', title: 'Mobile App Design', desc: 'Designing engaging mobile experiences for iOS and Android platforms.' }
+            ],
+            about: {
+                year: '2024',
+                yearLabel: 'Graduated',
+                heading: 'Creative Developer & Designer',
+                p1: 'I\'m a fresh design graduate with a passion for blending creativity with functionality. My journey started with a fascination for how things look and work together, leading me to pursue a career in digital design and development.',
+                p2: 'With skills in both design and front-end development, I bridge the gap between beautiful aesthetics and seamless user experiences. I believe every pixel matters and every interaction should be intentional.',
+                p3: 'When I\'m not designing or coding, you\'ll find me exploring new design trends, contributing to open-source projects, or sharing knowledge with the design community.',
+                chips: ['Creative', 'Detail-oriented', 'Problem-solver', 'Team player', 'Always learning']
+            },
+            education: [
+                { year: '2020-2024', degree: 'Bachelor of Design', institution: 'University of Creative Arts', desc: 'Specialized in Digital Design and User Experience. Completed capstone project on designing inclusive mobile applications.', badge: 'First Class Honours' },
+                { year: '2023', degree: 'Google UX Design Certificate', institution: 'Coursera', desc: 'Comprehensive program covering design thinking, wireframing, prototyping, and user research methodologies.', badge: 'Certification' },
+                { year: '2022', degree: 'Web Development Bootcamp', institution: 'Interactive Code Academy', desc: 'Intensive 12-week program focusing on HTML, CSS, JavaScript, and React. Built 8+ full-stack projects.', badge: 'Completion' }
+            ],
+            skills: {
+                designBars: [
+                    { name: 'Figma', value: 95 },
+                    { name: 'Adobe XD', value: 85 },
+                    { name: 'Sketch', value: 80 }
+                ],
+                devBars: [
+                    { name: 'JavaScript', value: 90 },
+                    { name: 'React', value: 88 },
+                    { name: 'CSS/SCSS', value: 92 }
+                ],
+                tools: ['Git & GitHub', 'VS Code', 'Webpack', 'Figma', 'WordPress', 'Framer'],
+                softSkills: ['Communication', 'Collaboration', 'Problem-solving', 'Time Management', 'Leadership', 'Adaptability']
+            },
+            projects: [
+                { emoji: '🎯', title: 'Analytics Dashboard', desc: 'Designed a comprehensive analytics dashboard for a SaaS platform, improving data visualization and user engagement.', tags: ['UI/UX', 'SaaS'], gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', featured: true, live: '#', github: '#' },
+                { emoji: '🛍️', title: 'E-Commerce Platform', desc: 'Built a responsive e-commerce site with product filtering, cart management, and checkout flow optimization.', tags: ['E-commerce', 'Front-end'], gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', featured: false, live: '#', github: '#' },
+                { emoji: '📱', title: 'Fitness Tracker App', desc: 'Designed a mobile fitness tracking application with workout logging, progress visualization, and social features.', tags: ['Mobile App', 'Design'], gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', featured: false, live: '#', github: '#' },
+                { emoji: '🏠', title: 'Property Listing Site', desc: 'Created a property listing platform with advanced search filters, virtual tours, and agent management dashboard.', tags: ['Real Estate', 'Full-stack'], gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', featured: false, live: '#', github: '#' },
+                { emoji: '🎓', title: 'Online Learning Platform', desc: 'Built an interactive educational platform with course management, student progress tracking, and video integration.', tags: ['EdTech', 'React'], gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', featured: false, live: '#', github: '#' },
+                { emoji: '💬', title: 'Community Chat App', desc: 'Designed and developed a real-time chat application with threading, notifications, and user presence indicators.', tags: ['Social', 'Community'], gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', featured: false, live: '#', github: '#' }
+            ],
+            contact: {
+                email: 'dilina@example.com',
+                heading: 'Ready to create something amazing?',
+                desc: 'Let\'s collaborate on your next project. Whether you need a stunning website, an app experience, or a complete brand overhaul, I\'m here to help bring your vision to life.',
+                github: '#',
+                linkedin: '#',
+                twitter: '#',
+                dribbble: '#',
+                copyright: '© 2024 Dilina Perera. All rights reserved.'
+            },
+            settings: {
+                pageTitle: 'Dilina Perera - Portfolio',
+                accentColor: '#ff5c3a',
+                secondaryColor: '#14b8a6',
+                hiddenSections: {
+                    services: false,
+                    about: false,
+                    education: false,
+                    skills: false,
+                    projects: false
+                }
+            }
+        };
+
+        let cmsData = { ...defaultData };
+
+        // ===== LOAD & SAVE =====
+        function loadData() {
+            const saved = localStorage.getItem('portfolio_cms');
+            if (saved) {
+                try {
+                    cmsData = JSON.parse(saved);
+                } catch (e) {
+                    cmsData = defaultData;
+                }
+            } else {
+                cmsData = defaultData;
+            }
+            renderAll();
+        }
+
+        function saveData() {
+            const data = gatherAllData();
+            localStorage.setItem('portfolio_cms', JSON.stringify(data));
+            document.getElementById('save-btn').textContent = '✓ Saved';
+            setTimeout(() => {
+                document.getElementById('save-btn').textContent = '💾 Save Changes';
+            }, 2000);
+
+            // Auto-push to GitHub if configured
+            const ghCfg = getGithubSettings();
+            if (ghCfg.token && ghCfg.username && ghCfg.repo) {
+                pushToGitHub(true).then(ok => {
+                    showToast(ok ? '✓ Saved & pushed to GitHub!' : '✓ Saved locally (GitHub push failed)');
+                });
+            } else {
+                showToast('Changes saved locally!');
+            }
+        }
+
+        // ===== GITHUB INTEGRATION =====
+        const GH_KEY = 'portfolio_github';
+
+        function getGithubSettings() {
+            try { return JSON.parse(localStorage.getItem(GH_KEY) || '{}'); } catch(e) { return {}; }
+        }
+
+        function saveGithubSettings() {
+            const s = {
+                token:    document.getElementById('gh-token').value.trim(),
+                username: document.getElementById('gh-username').value.trim(),
+                repo:     document.getElementById('gh-repo').value.trim(),
+                branch:   document.getElementById('gh-branch').value.trim() || 'main',
+                filepath: document.getElementById('gh-filepath').value.trim() || 'cms-data.json'
+            };
+            localStorage.setItem(GH_KEY, JSON.stringify(s));
+            updateGithubStatusBadge();
+            showToast('GitHub settings saved!');
+        }
+
+        function loadGithubSettings() {
+            const s = getGithubSettings();
+            document.getElementById('gh-token').value    = s.token    || '';
+            document.getElementById('gh-username').value = s.username || '';
+            document.getElementById('gh-repo').value     = s.repo     || '';
+            document.getElementById('gh-branch').value   = s.branch   || 'main';
+            document.getElementById('gh-filepath').value = s.filepath || 'cms-data.json';
+            updateGithubStatusBadge();
+        }
+
+        function updateGithubStatusBadge() {
+            const el = document.getElementById('gh-status-indicator');
+            if (!el) return;
+            const s = getGithubSettings();
+            const ok = s.token && s.username && s.repo;
+            el.innerHTML = ok
+                ? `<div class="gh-status-connected"><div class="status-dot"></div> Connected — ${s.username}/${s.repo} (${s.branch || 'main'})</div>`
+                : `<div class="gh-status-disconnected">⚠️ Not configured — fill in your details below</div>`;
+        }
+
+        function ghLog(msg, type = 'info') {
+            const el = document.getElementById('gh-log');
+            el.style.display = 'block';
+            const div = document.createElement('div');
+            div.className = `gh-log-line-${type}`;
+            div.textContent = msg;
+            el.appendChild(div);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function clearGhLog() {
+            const el = document.getElementById('gh-log');
+            el.innerHTML = '';
+            el.style.display = 'none';
+        }
+
+        async function testGithubConnection() {
+            const s = getGithubSettings();
+            if (!s.token || !s.username || !s.repo) { showToast('Fill in all GitHub settings first'); return; }
+            clearGhLog();
+            ghLog('Testing connection to GitHub API...');
+            try {
+                const res = await fetch(`https://api.github.com/repos/${s.username}/${s.repo}`, {
+                    headers: { Authorization: `Bearer ${s.token}`, Accept: 'application/vnd.github+json' }
+                });
+                const json = await res.json();
+                if (res.ok) {
+                    ghLog(`✓ Connected! Repo: ${json.full_name} (${json.private ? 'private' : 'public'})`, 'success');
+                    ghLog(`✓ Default branch: ${json.default_branch}`, 'success');
+                } else {
+                    ghLog(`✗ ${json.message}`, 'error');
+                }
+            } catch(e) {
+                ghLog(`✗ Network error: ${e.message}`, 'error');
+            }
+        }
+
+        async function pushToGitHub(silent = false) {
+            const s = getGithubSettings();
+            if (!s.token || !s.username || !s.repo) {
+                if (!silent) showToast('Configure GitHub settings first');
+                return false;
+            }
+            if (!silent) clearGhLog();
+
+            const headers = {
+                Authorization: `Bearer ${s.token}`,
+                Accept: 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+            };
+            const apiUrl = `https://api.github.com/repos/${s.username}/${s.repo}/contents/${s.filepath}`;
+            const data = gatherAllData();
+
+            // Encode content as base64
+            const jsonStr = JSON.stringify(data, null, 2);
+            const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+
+            if (!silent) ghLog('Checking for existing file...');
+            let sha = null;
+            try {
+                const getRes = await fetch(`${apiUrl}?ref=${s.branch}`, { headers });
+                if (getRes.ok) { const existing = await getRes.json(); sha = existing.sha; }
+            } catch(e) {}
+
+            if (!silent) ghLog(sha ? 'Updating existing cms-data.json...' : 'Creating new cms-data.json...');
+            try {
+                const body = {
+                    message: `CMS update — ${new Date().toISOString()}`,
+                    content: encoded,
+                    branch: s.branch || 'main'
+                };
+                if (sha) body.sha = sha;
+
+                const putRes = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
+                const result = await putRes.json();
+
+                if (putRes.ok) {
+                    const raw = `https://raw.githubusercontent.com/${s.username}/${s.repo}/${s.branch || 'main'}/${s.filepath}`;
+                    if (!silent) {
+                        ghLog('✓ File pushed successfully!', 'success');
+                        ghLog(`✓ Raw URL: ${raw}`, 'success');
+                        ghLog('✓ GitHub Pages will reflect changes within ~1 minute.', 'success');
+                    }
+                    return true;
+                } else {
+                    if (!silent) ghLog(`✗ GitHub API error: ${result.message}`, 'error');
+                    return false;
+                }
+            } catch(e) {
+                if (!silent) ghLog(`✗ Network error: ${e.message}`, 'error');
+                return false;
+            }
+        }
+
+        function resetData() {
+            if (confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
+                localStorage.removeItem('portfolio_cms');
+                cmsData = JSON.parse(JSON.stringify(defaultData));
+                renderAll();
+                showToast('Data reset to defaults');
+            }
+        }
+
+        // ===== SIDEBAR NAVIGATION =====
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (e.target.classList.contains('sidebar-badge') || e.target.parentElement.classList.contains('sidebar-badge')) return;
+                
+                const panelId = item.getAttribute('data-panel');
+                switchPanel(panelId);
+                
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        const panelTitles = {
+            dashboard: { title: 'Dashboard', subtitle: 'Overview and quick actions' },
+            hero: { title: 'Home / Hero', subtitle: 'Configure your splash screen' },
+            services: { title: 'Services', subtitle: 'Manage your offered services' },
+            about: { title: 'About Me', subtitle: 'Tell your story' },
+            education: { title: 'Education', subtitle: 'Learning journey' },
+            skills: { title: 'Skills', subtitle: 'Your expertise' },
+            projects: { title: 'Projects', subtitle: 'Showcase your work' },
+            contact: { title: 'Contact', subtitle: 'Contact information and links' },
+            settings: { title: 'Site Settings', subtitle: 'Customization and visibility' }
+        };
+
+        function switchPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            
+            const info = panelTitles[panelId];
+            document.getElementById('section-title').textContent = info.title;
+            document.getElementById('section-subtitle').textContent = info.subtitle;
+        }
+
+        // ===== RENDER FUNCTIONS =====
+        function renderAll() {
+            renderHeroPanel();
+            renderServicesPanel();
+            renderAboutPanel();
+            renderEducationPanel();
+            renderSkillsPanel();
+            renderProjectsPanel();
+            renderDashboard();
+            loadColorSettings();
+        }
+
+        function renderHeroPanel() {
+            const h = cmsData.hero;
+            document.getElementById('hero-name').value = h.name || '';
+            document.getElementById('hero-logo').value = h.logo || '';
+            document.getElementById('hero-h1').value = h.headlineLine1 || '';
+            document.getElementById('hero-h2').value = h.headlineLine2 || '';
+            document.getElementById('hero-h3').value = h.headlineLine3 || '';
+            document.getElementById('hero-subtitle').value = h.subtitle || '';
+            document.getElementById('hero-availability').value = h.availabilityBadge || '';
+            document.getElementById('hero-grad-year').value = h.gradYear || '';
+            document.getElementById('hero-stat1-num').value = h.stat1.num || '';
+            document.getElementById('hero-stat1-label').value = h.stat1.label || '';
+            document.getElementById('hero-stat2-num').value = h.stat2.num || '';
+            document.getElementById('hero-stat2-label').value = h.stat2.label || '';
+            document.getElementById('hero-stat3-num').value = h.stat3.num || '';
+            document.getElementById('hero-stat3-label').value = h.stat3.label || '';
+        }
+
+        function renderServicesPanel() {
+            const list = document.getElementById('services-list');
+            list.innerHTML = '';
+            cmsData.services.forEach((svc, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header" onclick="this.classList.toggle('collapsed')">
+                        <h3>${svc.emoji} ${svc.title || 'Service #' + (idx + 1)}</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Icon/Emoji</label>
+                            <input type="text" value="${svc.emoji}" maxlength="2" onchange="cmsData.services[${idx}].emoji = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Title</label>
+                            <input type="text" value="${svc.title}" onchange="cmsData.services[${idx}].title = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Description</label>
+                            <textarea onchange="cmsData.services[${idx}].desc = this.value">${svc.desc}</textarea>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-small" onclick="moveService(${idx}, -1)">↑ Move Up</button>
+                            <button class="btn-small" onclick="moveService(${idx}, 1)">↓ Move Down</button>
+                            <button class="btn-small btn-delete" onclick="cmsData.services.splice(${idx}, 1); renderServicesPanel(); updateBadges();">🗑 Delete</button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            updateBadges();
+        }
+
+        function renderEducationPanel() {
+            const list = document.getElementById('education-list');
+            list.innerHTML = '';
+            cmsData.education.forEach((edu, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header" onclick="this.classList.toggle('collapsed')">
+                        <h3>${edu.degree}</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Year/Date Range</label>
+                            <input type="text" value="${edu.year}" onchange="cmsData.education[${idx}].year = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Degree Title</label>
+                            <input type="text" value="${edu.degree}" onchange="cmsData.education[${idx}].degree = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Institution</label>
+                            <input type="text" value="${edu.institution}" onchange="cmsData.education[${idx}].institution = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Description</label>
+                            <textarea onchange="cmsData.education[${idx}].desc = this.value">${edu.desc}</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Badge Label</label>
+                            <input type="text" value="${edu.badge}" onchange="cmsData.education[${idx}].badge = this.value">
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-small" onclick="moveEducation(${idx}, -1)">↑ Move Up</button>
+                            <button class="btn-small" onclick="moveEducation(${idx}, 1)">↓ Move Down</button>
+                            <button class="btn-small btn-delete" onclick="cmsData.education.splice(${idx}, 1); renderEducationPanel(); updateBadges();">🗑 Delete</button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            updateBadges();
+        }
+
+        function renderSkillsPanel() {
+            // Design skills
+            const designContainer = document.getElementById('design-skills-container');
+            designContainer.innerHTML = '';
+            cmsData.skills.designBars.forEach((skill, idx) => {
+                const skillHTML = `
+                    <div class="skill-bar-container">
+                        <div class="input-group">
+                            <label>Skill Name</label>
+                            <input type="text" value="${skill.name}" onchange="cmsData.skills.designBars[${idx}].name = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Proficiency: <span class="range-value">${skill.value}%</span></label>
+                            <input type="range" min="0" max="100" value="${skill.value}" onchange="cmsData.skills.designBars[${idx}].value = this.value; this.parentElement.querySelector('.range-value').textContent = this.value + '%';">
+                        </div>
+                    </div>
+                `;
+                designContainer.innerHTML += skillHTML;
+            });
+
+            // Dev skills
+            const devContainer = document.getElementById('dev-skills-container');
+            devContainer.innerHTML = '';
+            cmsData.skills.devBars.forEach((skill, idx) => {
+                const skillHTML = `
+                    <div class="skill-bar-container">
+                        <div class="input-group">
+                            <label>Skill Name</label>
+                            <input type="text" value="${skill.name}" onchange="cmsData.skills.devBars[${idx}].name = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Proficiency: <span class="range-value">${skill.value}%</span></label>
+                            <input type="range" min="0" max="100" value="${skill.value}" onchange="cmsData.skills.devBars[${idx}].value = this.value; this.parentElement.querySelector('.range-value').textContent = this.value + '%';">
+                        </div>
+                    </div>
+                `;
+                devContainer.innerHTML += skillHTML;
+            });
+
+            // Tools pills
+            renderChipInput('tools-chips-container', 'tools-chips-input', cmsData.skills.tools);
+            
+            // Soft skills pills
+            renderChipInput('soft-chips-container', 'soft-chips-input', cmsData.skills.softSkills);
+        }
+
+        function renderProjectsPanel() {
+            const list = document.getElementById('projects-list');
+            list.innerHTML = '';
+            cmsData.projects.forEach((proj, idx) => {
+                const featuredChecked = proj.featured ? 'checked' : '';
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header" onclick="this.classList.toggle('collapsed')">
+                        <h3>${proj.emoji} ${proj.title}</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="input-group">
+                            <label>Icon/Emoji</label>
+                            <input type="text" value="${proj.emoji}" maxlength="2" onchange="cmsData.projects[${idx}].emoji = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Title</label>
+                            <input type="text" value="${proj.title}" onchange="cmsData.projects[${idx}].title = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Description</label>
+                            <textarea onchange="cmsData.projects[${idx}].desc = this.value">${proj.desc}</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Tags (comma-separated)</label>
+                            <input type="text" value="${proj.tags.join(', ')}" onchange="cmsData.projects[${idx}].tags = this.value.split(',').map(t => t.trim())">
+                        </div>
+                        <div class="input-group">
+                            <label>Gradient CSS</label>
+                            <input type="text" value="${proj.gradient}" onchange="cmsData.projects[${idx}].gradient = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>Live Demo URL</label>
+                            <input type="url" value="${proj.live}" onchange="cmsData.projects[${idx}].live = this.value">
+                        </div>
+                        <div class="input-group">
+                            <label>GitHub URL</label>
+                            <input type="url" value="${proj.github}" onchange="cmsData.projects[${idx}].github = this.value">
+                        </div>
+                        <div class="toggle-switch">
+                            <label>Featured</label>
+                            <div class="switch ${proj.featured ? 'active' : ''}" onclick="cmsData.projects[${idx}].featured = !cmsData.projects[${idx}].featured; this.classList.toggle('active')">
+                                <div class="switch-slider"></div>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-small" onclick="moveProject(${idx}, -1)">↑ Move Up</button>
+                            <button class="btn-small" onclick="moveProject(${idx}, 1)">↓ Move Down</button>
+                            <button class="btn-small btn-delete" onclick="cmsData.projects.splice(${idx}, 1); renderProjectsPanel(); updateBadges();">🗑 Delete</button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+            updateBadges();
+        }
+
+        function renderAboutPanel() {
+            const a = cmsData.about;
+            document.getElementById('about-year').value = a.year || '';
+            document.getElementById('about-year-label').value = a.yearLabel || '';
+            document.getElementById('about-heading').value = a.heading || '';
+            document.getElementById('about-p1').value = a.p1 || '';
+            document.getElementById('about-p2').value = a.p2 || '';
+            document.getElementById('about-p3').value = a.p3 || '';
+            renderChipInput('about-chips-container', 'about-chips-input', a.chips);
+        }
+
+        function renderChipInput(containerId, inputId, items) {
+            const container = document.getElementById(containerId);
+            const input = document.getElementById(inputId);
+            
+            // Clear existing chips
+            container.querySelectorAll('.chip').forEach(c => c.remove());
+            
+            // Add chips
+            items.forEach((item, idx) => {
+                const chip = document.createElement('span');
+                chip.className = 'chip';
+                chip.innerHTML = `${item} <span class="chip-remove" onclick="removeChip(this, '${containerId}', '${inputId}')">×</span>`;
+                container.insertBefore(chip, input);
+            });
+            
+            // Attach event listener only if not already attached
+            if (!input.dataset.listenerAttached) {
+                input.dataset.listenerAttached = 'true';
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addChip(containerId, inputId);
+                    } else if (e.key === 'Backspace' && input.value === '') {
+                        let itemsArray = null;
+                        if (containerId === 'about-chips-container') itemsArray = cmsData.about.chips;
+                        else if (containerId === 'tools-chips-container') itemsArray = cmsData.skills.tools;
+                        else if (containerId === 'soft-chips-container') itemsArray = cmsData.skills.softSkills;
+                        
+                        if (itemsArray && itemsArray.length > 0) {
+                            itemsArray.pop();
+                            renderChipInput(containerId, inputId, itemsArray);
+                        }
+                    }
+                });
+            }
+        }
+
+        function addChip(containerId, inputId) {
+            const input = document.getElementById(inputId);
+            const value = input.value.trim();
+            if (!value) return;
+
+            let itemsArray = null;
+            
+            if (containerId === 'about-chips-container') {
+                itemsArray = cmsData.about.chips;
+            } else if (containerId === 'tools-chips-container') {
+                itemsArray = cmsData.skills.tools;
+            } else if (containerId === 'soft-chips-container') {
+                itemsArray = cmsData.skills.softSkills;
+            }
+
+            if (itemsArray && !itemsArray.includes(value)) {
+                itemsArray.push(value);
+                input.value = '';
+                renderChipInput(containerId, inputId, itemsArray);
+            }
+        }
+
+        function removeChip(element, containerId, inputId) {
+            const chipText = element.parentElement.textContent.trim().replace('×', '').trim();
+            let itemsArray = null;
+            
+            if (containerId === 'about-chips-container') {
+                itemsArray = cmsData.about.chips;
+            } else if (containerId === 'tools-chips-container') {
+                itemsArray = cmsData.skills.tools;
+            } else if (containerId === 'soft-chips-container') {
+                itemsArray = cmsData.skills.softSkills;
+            }
+
+            if (itemsArray) {
+                const idx = itemsArray.indexOf(chipText);
+                if (idx > -1) {
+                    itemsArray.splice(idx, 1);
+                    renderChipInput(containerId, inputId, itemsArray);
+                }
+            }
+        }
+
+        function renderDashboard() {
+            document.getElementById('stat-services').textContent = cmsData.services.length;
+            document.getElementById('stat-education').textContent = cmsData.education.length;
+            document.getElementById('stat-projects').textContent = cmsData.projects.length;
+            
+            const skillCount = cmsData.skills.designBars.length + cmsData.skills.devBars.length;
+            document.getElementById('stat-skills').textContent = skillCount;
+            
+            const total = cmsData.services.length + cmsData.education.length + cmsData.projects.length + skillCount;
+            document.getElementById('total-items').textContent = total + '+';
+        }
+
+        function loadColorSettings() {
+            const accent = cmsData.settings.accentColor;
+            const secondary = cmsData.settings.secondaryColor;
+            
+            document.getElementById('accent-color').value = accent;
+            document.getElementById('accent-hex').value = accent;
+            document.getElementById('secondary-color').value = secondary;
+            document.getElementById('secondary-hex').value = secondary;
+            document.getElementById('settings-title').value = cmsData.settings.pageTitle || '';
+
+            // Load visibility toggles
+            const hidden = cmsData.settings.hiddenSections;
+            ['services', 'about', 'education', 'skills', 'projects'].forEach(section => {
+                const toggle = document.getElementById(`toggle-${section}`);
+                if (toggle) {
+                    if (hidden[section]) {
+                        toggle.classList.remove('active');
+                    } else {
+                        toggle.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        // Color sync
+        document.getElementById('accent-color').addEventListener('change', (e) => {
+            const val = e.target.value;
+            document.getElementById('accent-hex').value = val;
+            cmsData.settings.accentColor = val;
+        });
+
+        document.getElementById('accent-hex').addEventListener('change', (e) => {
+            const val = e.target.value;
+            document.getElementById('accent-color').value = val;
+            cmsData.settings.accentColor = val;
+        });
+
+        document.getElementById('secondary-color').addEventListener('change', (e) => {
+            const val = e.target.value;
+            document.getElementById('secondary-hex').value = val;
+            cmsData.settings.secondaryColor = val;
+        });
+
+        document.getElementById('secondary-hex').addEventListener('change', (e) => {
+            const val = e.target.value;
+            document.getElementById('secondary-color').value = val;
+            cmsData.settings.secondaryColor = val;
+        });
+
+        // ===== HELPERS =====
+        function moveService(idx, dir) {
+            if ((idx === 0 && dir === -1) || (idx === cmsData.services.length - 1 && dir === 1)) return;
+            const temp = cmsData.services[idx];
+            cmsData.services[idx] = cmsData.services[idx + dir];
+            cmsData.services[idx + dir] = temp;
+            renderServicesPanel();
+        }
+
+        function moveEducation(idx, dir) {
+            if ((idx === 0 && dir === -1) || (idx === cmsData.education.length - 1 && dir === 1)) return;
+            const temp = cmsData.education[idx];
+            cmsData.education[idx] = cmsData.education[idx + dir];
+            cmsData.education[idx + dir] = temp;
+            renderEducationPanel();
+        }
+
+        function moveProject(idx, dir) {
+            if ((idx === 0 && dir === -1) || (idx === cmsData.projects.length - 1 && dir === 1)) return;
+            const temp = cmsData.projects[idx];
+            cmsData.projects[idx] = cmsData.projects[idx + dir];
+            cmsData.projects[idx + dir] = temp;
+            renderProjectsPanel();
+        }
+
+        function addService() {
+            cmsData.services.push({ emoji: '🎯', title: 'New Service', desc: 'Service description' });
+            renderServicesPanel();
+        }
+
+        function addEducation() {
+            cmsData.education.push({ year: '20XX', degree: 'Degree Title', institution: 'Institution', desc: 'Description', badge: 'Badge' });
+            renderEducationPanel();
+        }
+
+        function addProject() {
+            cmsData.projects.push({ 
+                emoji: '🚀', 
+                title: 'New Project', 
+                desc: 'Project description', 
+                tags: ['Tag1', 'Tag2'],
+                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                featured: false,
+                live: '#',
+                github: '#'
+            });
+            renderProjectsPanel();
+        }
+
+        function updateBadges() {
+            document.getElementById('services-count').textContent = cmsData.services.length;
+            document.getElementById('education-count').textContent = cmsData.education.length;
+            document.getElementById('projects-count').textContent = cmsData.projects.length;
+        }
+
+        function toggleSection(section) {
+            cmsData.settings.hiddenSections[section] = !cmsData.settings.hiddenSections[section];
+            document.getElementById(`toggle-${section}`).classList.toggle('active');
+        }
+
+        function switchSkillTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tab}-tab`).classList.add('active');
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ===== UPDATE CMS DATA FROM FORM =====
+        function updateCmsDataFromForm() {
+            // Hero
+            if (document.getElementById('hero-name')) {
+                cmsData.hero.name = document.getElementById('hero-name').value;
+                cmsData.hero.logo = document.getElementById('hero-logo').value;
+                cmsData.hero.headlineLine1 = document.getElementById('hero-h1').value;
+                cmsData.hero.headlineLine2 = document.getElementById('hero-h2').value;
+                cmsData.hero.headlineLine3 = document.getElementById('hero-h3').value;
+                cmsData.hero.subtitle = document.getElementById('hero-subtitle').value;
+                cmsData.hero.availabilityBadge = document.getElementById('hero-availability').value;
+                cmsData.hero.gradYear = document.getElementById('hero-grad-year').value;
+                cmsData.hero.stat1.num = document.getElementById('hero-stat1-num').value;
+                cmsData.hero.stat1.label = document.getElementById('hero-stat1-label').value;
+                cmsData.hero.stat2.num = document.getElementById('hero-stat2-num').value;
+                cmsData.hero.stat2.label = document.getElementById('hero-stat2-label').value;
+                cmsData.hero.stat3.num = document.getElementById('hero-stat3-num').value;
+                cmsData.hero.stat3.label = document.getElementById('hero-stat3-label').value;
+            }
+
+            // About
+            if (document.getElementById('about-year')) {
+                cmsData.about.year = document.getElementById('about-year').value;
+                cmsData.about.yearLabel = document.getElementById('about-year-label').value;
+                cmsData.about.heading = document.getElementById('about-heading').value;
+                cmsData.about.p1 = document.getElementById('about-p1').value;
+                cmsData.about.p2 = document.getElementById('about-p2').value;
+                cmsData.about.p3 = document.getElementById('about-p3').value;
+            }
+
+            // Contact
+            if (document.getElementById('contact-email')) {
+                cmsData.contact.email = document.getElementById('contact-email').value;
+                cmsData.contact.heading = document.getElementById('contact-heading').value;
+                cmsData.contact.desc = document.getElementById('contact-desc').value;
+                cmsData.contact.github = document.getElementById('contact-github').value;
+                cmsData.contact.linkedin = document.getElementById('contact-linkedin').value;
+                cmsData.contact.twitter = document.getElementById('contact-twitter').value;
+                cmsData.contact.dribbble = document.getElementById('contact-dribbble').value;
+                cmsData.contact.copyright = document.getElementById('contact-copyright').value;
+            }
+
+            // Settings
+            if (document.getElementById('settings-title')) {
+                cmsData.settings.pageTitle = document.getElementById('settings-title').value;
+            }
+        }
+
+        // ===== GATHER ALL DATA =====
+        function gatherAllData() {
+            updateCmsDataFromForm();
+            return cmsData;
+        }
+
+        // ===== PREVIEW =====
+        function generatePortfolioHTML(data) {
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.settings.pageTitle}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: ${data.settings.accentColor};
+            --secondary: ${data.settings.secondaryColor};
+            --dark: #0f172a;
+            --bg: #ffffff;
+            --border: #e8e8e5;
+            --text: #1a1a18;
+            --light-gray: #f0f0ed;
+            --white: #ffffff;
+            --section-alt: #f8f8f6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        html {
+            cursor: none;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            transition: background 0.1s ease;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-logo {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .navbar-logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hire-btn {
+            padding: 0.7rem 1.5rem;
+            border: 2px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .hire-btn:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 4% 60px;
+            gap: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 92, 58, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            left: 5%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: 50px;
+            right: 10%;
+            animation: float 8s ease-in-out infinite 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .hero-left {
+            flex: 1;
+            z-index: 10;
+        }
+
+        .availability {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #22c55e;
+            margin-bottom: 2rem;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero-headline {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .hero-headline em {
+            font-style: italic;
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 92, 58, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--text);
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 400px;
+        }
+
+        .stat {
+            text-align: left;
+        }
+
+        .stat-number {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+
+        .hero-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            animation: float 6s ease-in-out infinite 0.5s;
+        }
+
+        .avatar {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        .avatar-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px dashed var(--primary);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 {
+            width: 340px;
+            height: 340px;
+            animation: spin 20s linear infinite;
+        }
+
+        .ring-2 {
+            width: 400px;
+            height: 400px;
+            animation: spin 25s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .grad-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 10;
+        }
+
+        .tag-pill {
+            position: absolute;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 8;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .tag-1 {
+            top: 20px;
+            right: 40px;
+        }
+
+        .tag-2 {
+            bottom: 60px;
+            left: 20px;
+            animation-delay: 0.5s;
+        }
+
+        section {
+            padding: 100px 4%;
+        }
+
+        section:not(.hero) {
+            border-top: 1px solid var(--border);
+        }
+
+        #services,
+        #education,
+        #projects {
+            background: var(--section-alt);
+        }
+
+        #about,
+        #skills {
+            background: var(--white);
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .section-heading {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            line-height: 1.2;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            padding: 2.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 92, 58, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.05);
+        }
+
+        .service-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .service-desc {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-left {
+            position: relative;
+            height: 500px;
+        }
+
+        .portrait {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .portrait::after {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: var(--primary);
+            bottom: -10px;
+            right: -10px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+
+        .year-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            z-index: 10;
+            font-size: 0.9rem;
+        }
+
+        .about-right {
+            padding-left: 2rem;
+        }
+
+        .about-heading {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .about-heading em {
+            font-style: italic;
+            color: var(--primary);
+        }
+
+        .about-text {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .personality-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .chip {
+            padding: 0.5rem 1rem;
+            background: var(--light-gray);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .education-timeline {
+            max-width: 800px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 3px var(--primary);
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 16px;
+            top: 20px;
+            width: 2px;
+            height: calc(100% + 20px);
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .timeline-year {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-degree {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-institution {
+            font-size: 0.95rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .skills-container {
+            max-width: 900px;
+        }
+
+        .skill-group {
+            margin-bottom: 4rem;
+        }
+
+        .skill-group-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .skill-bar-container {
+            margin-bottom: 2rem;
+        }
+
+        .skill-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .skill-bar {
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .skill-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0;
+            border-radius: 10px;
+            animation: fillBar 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fillBar {
+            to { width: 100%; }
+        }
+
+        .pill-group {
+            margin-bottom: 2rem;
+        }
+
+        .pill-group-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pill {
+            padding: 0.6rem 1.2rem;
+            background: var(--light-gray);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-tag {
+            background: var(--light-gray);
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .project-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        .project-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .project-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 100px 4%;
+        }
+
+        .contact-heading {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .contact-desc {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-email {
+            display: inline-block;
+            font-size: 1.3rem;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            margin-bottom: 3rem;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .copyright {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 100;
+            font-size: 1.2rem;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .reveal.fade-up {
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero {
+                flex-direction: column;
+                padding: 100px 4% 60px;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-left {
+                height: 350px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <nav>
+        <div class="navbar-logo">${data.hero.logo}<span>.</span></div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-link active">Home</a></li>
+            ${!data.settings.hiddenSections.services ? '<li><a href="#services" class="nav-link">Services</a></li>' : ''}
+            ${!data.settings.hiddenSections.about ? '<li><a href="#about" class="nav-link">About</a></li>' : ''}
+            ${!data.settings.hiddenSections.education ? '<li><a href="#education" class="nav-link">Education</a></li>' : ''}
+            ${!data.settings.hiddenSections.skills ? '<li><a href="#skills" class="nav-link">Skills</a></li>' : ''}
+            ${!data.settings.hiddenSections.projects ? '<li><a href="#projects" class="nav-link">Projects</a></li>' : ''}
+        </ul>
+        <button class="hire-btn" onclick="document.querySelector('.contact-email').click()">Hire Me</button>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-left reveal fade-up">
+            <div class="availability">
+                <div class="pulse-dot"></div>
+                ${data.hero.availabilityBadge}
+            </div>
+            <h1 class="hero-headline">
+                ${data.hero.headlineLine1} <em>${data.hero.headlineLine2}</em> ${data.hero.headlineLine3}
+            </h1>
+            <p class="hero-subtitle">${data.hero.subtitle}</p>
+            <div class="hero-buttons">
+                <button class="btn-primary">View My Work</button>
+                <button class="btn-secondary">Download Resume</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">${data.hero.stat1.num}</div>
+                    <div class="stat-label">${data.hero.stat1.label}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">${data.hero.stat2.num}</div>
+                    <div class="stat-label">${data.hero.stat2.label}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">${data.hero.stat3.num}</div>
+                    <div class="stat-label">${data.hero.stat3.label}</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-right reveal fade-up">
+            <div class="avatar-container">
+                <div class="avatar-ring ring-1"></div>
+                <div class="avatar-ring ring-2"></div>
+                <div class="avatar">👨‍💼</div>
+                <div class="grad-badge">${data.hero.gradYear}</div>
+                <div class="tag-pill tag-1">React, Vue</div>
+                <div class="tag-pill tag-2">UX Design</div>
+            </div>
+        </div>
+    </section>
+
+    ${!data.settings.hiddenSections.services ? `
+    <section id="services">
+        <span class="section-tag">What I Offer</span>
+        <h2 class="section-heading">Services</h2>
+        <div class="services-grid">
+            ${data.services.map((svc, i) => `
+            <div class="service-card reveal fade-up">
+                <div class="service-icon">${svc.emoji}</div>
+                <div class="service-number">${String(i + 1).padStart(2, '0')}</div>
+                <h3 class="service-title">${svc.title}</h3>
+                <p class="service-desc">${svc.desc}</p>
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    ${!data.settings.hiddenSections.about ? `
+    <section id="about">
+        <div class="about-container">
+            <div class="about-left reveal fade-up">
+                <div class="portrait">📸</div>
+                <div class="year-badge">${data.about.year}</div>
+            </div>
+            <div class="about-right reveal fade-up">
+                <span class="section-tag">About Me</span>
+                <h2 class="about-heading">${data.about.heading.split(' ').slice(0, -2).join(' ')} <em>${data.about.heading.split(' ').slice(-2).join(' ')}</em></h2>
+                <p class="about-text">${data.about.p1}</p>
+                <p class="about-text">${data.about.p2}</p>
+                <p class="about-text">${data.about.p3}</p>
+                <div class="personality-chips">
+                    ${data.about.chips.map(c => `<div class="chip">${c}</div>`).join('')}
+                </div>
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    ${!data.settings.hiddenSections.education ? `
+    <section id="education">
+        <span class="section-tag">Learning Journey</span>
+        <h2 class="section-heading">Education</h2>
+        <div class="education-timeline">
+            ${data.education.map(edu => `
+            <div class="timeline-item reveal fade-up">
+                <div class="timeline-line"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">${edu.year}</div>
+                    <div class="timeline-degree">${edu.degree}</div>
+                    <div class="timeline-institution">${edu.institution}</div>
+                    <p class="timeline-desc">${edu.desc}</p>
+                    <span class="timeline-badge">${edu.badge}</span>
+                </div>
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    ${!data.settings.hiddenSections.skills ? `
+    <section id="skills">
+        <span class="section-tag">Expertise</span>
+        <h2 class="section-heading">Skills</h2>
+        <div class="skills-container">
+            ${data.skills.designBars.length ? `
+            <div class="skill-group">
+                <h3 class="skill-group-title">Design Tools</h3>
+                <div>
+                    ${data.skills.designBars.map((skill, i) => `
+                    <div class="skill-bar-container">
+                        <div class="skill-label">
+                            <span>${skill.name}</span>
+                            <span>${skill.value}%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: ${skill.value}%; transition-delay: ${i * 0.1}s;"></div>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            ${data.skills.devBars.length ? `
+            <div class="skill-group">
+                <h3 class="skill-group-title">Development</h3>
+                <div>
+                    ${data.skills.devBars.map((skill, i) => `
+                    <div class="skill-bar-container">
+                        <div class="skill-label">
+                            <span>${skill.name}</span>
+                            <span>${skill.value}%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: ${skill.value}%; transition-delay: ${i * 0.1}s;"></div>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            ${data.skills.tools.length ? `
+            <div class="pill-group">
+                <h4 class="pill-group-title">Tools & Platforms</h4>
+                <div class="pills">
+                    ${data.skills.tools.map(t => `<div class="pill">${t}</div>`).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            ${data.skills.softSkills.length ? `
+            <div class="pill-group">
+                <h4 class="pill-group-title">Soft Skills</h4>
+                <div class="pills">
+                    ${data.skills.softSkills.map(s => `<div class="pill">${s}</div>`).join('')}
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    </section>
+    ` : ''}
+
+    ${!data.settings.hiddenSections.projects ? `
+    <section id="projects">
+        <span class="section-tag">Recent Work</span>
+        <h2 class="section-heading">Projects</h2>
+        <div class="projects-grid">
+            ${data.projects.map(proj => `
+            <div class="project-card reveal fade-up">
+                <div class="project-thumbnail" style="background: ${proj.gradient};">
+                    ${proj.emoji}
+                    ${proj.featured ? '<div class="featured-badge">Featured</div>' : ''}
+                </div>
+                <div class="project-content">
+                    <div class="project-tags">
+                        ${proj.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                    </div>
+                    <h3 class="project-title">${proj.title}</h3>
+                    <p class="project-desc">${proj.desc}</p>
+                    <div class="project-links">
+                        <a href="${proj.live}" class="project-link">Live Demo</a>
+                        <a href="${proj.github}" class="project-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <section class="contact" id="contact">
+        <h2 class="contact-heading">${data.contact.heading}</h2>
+        <p class="contact-desc">${data.contact.desc}</p>
+        <a href="mailto:${data.contact.email}" class="contact-email">${data.contact.email}</a>
+        <div class="social-icons">
+            ${data.contact.github ? `<a href="${data.contact.github}" class="social-icon" title="GitHub">🐙</a>` : ''}
+            ${data.contact.linkedin ? `<a href="${data.contact.linkedin}" class="social-icon" title="LinkedIn">💼</a>` : ''}
+            ${data.contact.twitter ? `<a href="${data.contact.twitter}" class="social-icon" title="Twitter">🐦</a>` : ''}
+            ${data.contact.dribbble ? `<a href="${data.contact.dribbble}" class="social-icon" title="Dribbble">🎨</a>` : ''}
+        </div>
+        <p class="copyright">${data.contact.copyright}</p>
+    </section>
+
+    <button class="scroll-to-top" id="scrollTop">↑</button>
+
+    <script>
+        // Basic JS for the preview
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorRing = document.querySelector('.cursor-ring');
+
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = e.clientX + 'px';
+            cursorDot.style.top = e.clientY + 'px';
+            setTimeout(() => {
+                cursorRing.style.left = e.clientX + 'px';
+                cursorRing.style.top = e.clientY + 'px';
+            }, 50);
+        });
+
+        const nav = document.querySelector('nav');
+        const scrollTopBtn = document.getElementById('scrollTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+
+            if (window.scrollY > 400) scrollTopBtn.classList.add('visible');
+            else scrollTopBtn.classList.remove('visible');
+        });
+
+        scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    ${'<' + '/script>'}
+</body>
+</html>`;
+        }
+
+        function previewPortfolio() {
+            const data = gatherAllData();
+            const html = generatePortfolioHTML(data);
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            document.getElementById('preview-frame').src = url;
+            document.getElementById('preview-modal').classList.add('active');
+        }
+
+        function closePreview() {
+            document.getElementById('preview-modal').classList.remove('active');
+        }
+
+        document.getElementById('preview-btn').addEventListener('click', previewPortfolio);
+        document.getElementById('save-btn').addEventListener('click', saveData);
+        document.getElementById('reset-btn').addEventListener('click', resetData);
+
+        // Init
+        loadData();
+        loadGithubSettings();
+
+        // Setup contact fields after load
+        setTimeout(() => {
+            document.getElementById('contact-github').value = cmsData.contact.github || '';
+            document.getElementById('contact-linkedin').value = cmsData.contact.linkedin || '';
+            document.getElementById('contact-twitter').value = cmsData.contact.twitter || '';
+            document.getElementById('contact-dribbble').value = cmsData.contact.dribbble || '';
+        }, 100);
+    </script>
+</body>
+</html>
