@@ -1,0 +1,242 @@
+{
+  "hero": {
+    "name": "Dilina",
+    "logo": "dilina",
+    "headlineLine1": "Crafting",
+    "headlineLine2": "digital experiences",
+    "headlineLine3": "that matter",
+    "subtitle": "Fresh design graduate passionate about creating beautiful, user-centered interfaces and experiences that help businesses grow.",
+    "availabilityBadge": "Open to opportunities",
+    "gradYear": "2026",
+    "stat1": {
+      "num": "15+",
+      "label": "Projects"
+    },
+    "stat2": {
+      "num": "3+",
+      "label": "Years"
+    },
+    "stat3": {
+      "num": "50+",
+      "label": "Clients"
+    }
+  },
+  "services": [
+    {
+      "emoji": "🎨",
+      "title": "UI/UX Design",
+      "desc": "Creating intuitive and beautiful interfaces that users love to interact with."
+    },
+    {
+      "emoji": "💻",
+      "title": "Front-end Development",
+      "desc": "Building responsive, performant web applications with modern technologies."
+    },
+    {
+      "emoji": "🔄",
+      "title": "Responsive Design",
+      "desc": "Ensuring perfect experiences across all devices and screen sizes."
+    },
+    {
+      "emoji": "⚡",
+      "title": "Performance Optimization",
+      "desc": "Making websites lightning-fast and optimized for conversions."
+    },
+    {
+      "emoji": "🛠️",
+      "title": "Brand Strategy",
+      "desc": "Developing cohesive visual identities that resonate with your audience."
+    },
+    {
+      "emoji": "📱",
+      "title": "Mobile App Design",
+      "desc": "Designing engaging mobile experiences for iOS and Android platforms."
+    }
+  ],
+  "about": {
+    "year": "2024",
+    "yearLabel": "Graduated",
+    "heading": "Creative Developer & Designer",
+    "p1": "I'm a fresh design graduate with a passion for blending creativity with functionality. My journey started with a fascination for how things look and work together, leading me to pursue a career in digital design and development.",
+    "p2": "With skills in both design and front-end development, I bridge the gap between beautiful aesthetics and seamless user experiences. I believe every pixel matters and every interaction should be intentional.",
+    "p3": "When I'm not designing or coding, you'll find me exploring new design trends, contributing to open-source projects, or sharing knowledge with the design community.",
+    "chips": [
+      "Creative",
+      "Detail-oriented",
+      "Problem-solver",
+      "Team player",
+      "Always learning"
+    ]
+  },
+  "education": [
+    {
+      "year": "2020-2024",
+      "degree": "Bachelor of Design",
+      "institution": "University of Creative Arts",
+      "desc": "Specialized in Digital Design and User Experience. Completed capstone project on designing inclusive mobile applications.",
+      "badge": "First Class Honours"
+    },
+    {
+      "year": "2023",
+      "degree": "Google UX Design Certificate",
+      "institution": "Coursera",
+      "desc": "Comprehensive program covering design thinking, wireframing, prototyping, and user research methodologies.",
+      "badge": "Certification"
+    },
+    {
+      "year": "2022",
+      "degree": "Web Development Bootcamp",
+      "institution": "Interactive Code Academy",
+      "desc": "Intensive 12-week program focusing on HTML, CSS, JavaScript, and React. Built 8+ full-stack projects.",
+      "badge": "Completion"
+    }
+  ],
+  "skills": {
+    "designBars": [
+      {
+        "name": "Figma",
+        "value": 95
+      },
+      {
+        "name": "Adobe XD",
+        "value": 85
+      },
+      {
+        "name": "Sketch",
+        "value": 80
+      }
+    ],
+    "devBars": [
+      {
+        "name": "JavaScript",
+        "value": 90
+      },
+      {
+        "name": "React",
+        "value": 88
+      },
+      {
+        "name": "CSS/SCSS",
+        "value": 92
+      }
+    ],
+    "tools": [
+      "Git & GitHub",
+      "VS Code",
+      "Webpack",
+      "Figma",
+      "WordPress",
+      "Framer"
+    ],
+    "softSkills": [
+      "Communication",
+      "Collaboration",
+      "Problem-solving",
+      "Time Management",
+      "Leadership",
+      "Adaptability"
+    ]
+  },
+  "projects": [
+    {
+      "emoji": "🎯",
+      "title": "Analytics Dashboard",
+      "desc": "Designed a comprehensive analytics dashboard for a SaaS platform, improving data visualization and user engagement.",
+      "tags": [
+        "UI/UX",
+        "SaaS"
+      ],
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "featured": true,
+      "live": "#",
+      "github": "#"
+    },
+    {
+      "emoji": "🛍️",
+      "title": "E-Commerce Platform",
+      "desc": "Built a responsive e-commerce site with product filtering, cart management, and checkout flow optimization.",
+      "tags": [
+        "E-commerce",
+        "Front-end"
+      ],
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "featured": false,
+      "live": "#",
+      "github": "#"
+    },
+    {
+      "emoji": "📱",
+      "title": "Fitness Tracker App",
+      "desc": "Designed a mobile fitness tracking application with workout logging, progress visualization, and social features.",
+      "tags": [
+        "Mobile App",
+        "Design"
+      ],
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "featured": false,
+      "live": "#",
+      "github": "#"
+    },
+    {
+      "emoji": "🏠",
+      "title": "Property Listing Site",
+      "desc": "Created a property listing platform with advanced search filters, virtual tours, and agent management dashboard.",
+      "tags": [
+        "Real Estate",
+        "Full-stack"
+      ],
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "featured": false,
+      "live": "#",
+      "github": "#"
+    },
+    {
+      "emoji": "🎓",
+      "title": "Online Learning Platform",
+      "desc": "Built an interactive educational platform with course management, student progress tracking, and video integration.",
+      "tags": [
+        "EdTech",
+        "React"
+      ],
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "featured": false,
+      "live": "#",
+      "github": "#"
+    },
+    {
+      "emoji": "💬",
+      "title": "Community Chat App",
+      "desc": "Designed and developed a real-time chat application with threading, notifications, and user presence indicators.",
+      "tags": [
+        "Social",
+        "Community"
+      ],
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "featured": false,
+      "live": "#",
+      "github": "#"
+    }
+  ],
+  "contact": {
+    "email": "dilina@example.com",
+    "heading": "Ready to create something amazing?",
+    "desc": "Let's collaborate on your next project. Whether you need a stunning website, an app experience, or a complete brand overhaul, I'm here to help bring your vision to life.",
+    "github": "#",
+    "linkedin": "#",
+    "twitter": "#",
+    "dribbble": "#",
+    "copyright": "© 2024 Dilina Perera. All rights reserved."
+  },
+  "settings": {
+    "pageTitle": "Dilina Perera - Portfolio",
+    "accentColor": "#ff5c3a",
+    "secondaryColor": "#14b8a6",
+    "hiddenSections": {
+      "services": false,
+      "about": false,
+      "education": false,
+      "skills": false,
+      "projects": false
+    }
+  }
+}
