@@ -23,14 +23,14 @@
   },
   "services": [
     {
-      "emoji": "🎨",
-      "title": "UI/UX Design",
-      "desc": "Creating intuitive and beautiful interfaces that users love to interact with."
-    },
-    {
       "emoji": "💻",
       "title": "Front-end Development",
       "desc": "Building responsive, performant web applications with modern technologies."
+    },
+    {
+      "emoji": "🎨",
+      "title": "UI/UX Design",
+      "desc": "Creating intuitive and beautiful interfaces that users love to interact with."
     },
     {
       "emoji": "🔄",
